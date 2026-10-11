@@ -60,6 +60,7 @@ for _, name in ipairs(names) do
     local entry = { name = name, types = type_list }
     report.peripherals[#report.peripherals + 1] = entry
     if relevant then
+        local kind = table.concat(type_list, ","):lower()
         local method_list = peripheral.getMethods(name) or {}
         table.sort(method_list)
         entry.methods, entry.readings = method_list, {}
@@ -75,12 +76,15 @@ for _, name in ipairs(names) do
             entry.readings.chemical_modes = invoke(name, "getSupportedModes", "CHEMICAL")
         end
         if available.getMode then
-            entry.readings.chemical_sides = {}
-            for _, side in ipairs({ "FRONT", "BACK", "LEFT", "RIGHT", "TOP", "BOTTOM" }) do
-                entry.readings.chemical_sides[side] = invoke(name, "getMode", "CHEMICAL", side)
+            if kind:find("fusionreactorport", 1, true) then
+                entry.readings.getMode = invoke(name, "getMode")
+            elseif available.getSupportedModes then
+                entry.readings.chemical_sides = {}
+                for _, side in ipairs({ "FRONT", "BACK", "LEFT", "RIGHT", "TOP", "BOTTOM" }) do
+                    entry.readings.chemical_sides[side] = invoke(name, "getMode", "CHEMICAL", side)
+                end
             end
         end
-        local kind = table.concat(type_list, ","):lower()
         if kind:find("fusionreactorlogicadapter", 1, true) then counts.fusion = counts.fusion + 1 end
         if kind:find("fusionreactorport", 1, true) then counts.ports = counts.ports + 1 end
         if kind:find("laseramplifier", 1, true) then counts.laser = counts.laser + 1 end

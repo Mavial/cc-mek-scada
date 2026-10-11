@@ -134,3 +134,29 @@ If Pastebin report transfer fails, `tools/fusion-report-upload.lua` uploads the
 existing `fusion-probe.txt` to paste.rs and prints the retrieval link. It checks
 the report format, rejects partial uploads, and displays connection errors.
 The uploader reads the saved report only; it does not access reactor peripherals.
+
+## First live server capability report
+
+Retrieved October 11, 2026 from the operator's report, captured on computer 9.
+The wired network exposes `fusionReactorLogicAdapter_0`, `fusionReactorPort_0`
+and `laserAmplifier_0`. The reactor is formed and ignited, with 500 mB of D-T
+fuel in its 500 mB tank and empty separate deuterium/tritium tanks. The Hohlraum
+getter includes chemical components reporting 10 mB of fusion fuel; this is a
+possible source of charge verification, rather than relying on item count alone.
+
+The adapter exposes telemetry and injection/logic settings, with no direct
+activation/shutdown method. The port exposes energy and a zero-argument
+`getMode()` / boolean `setMode()` pair. Local version inspection confirms that
+this port mode controls automatic output targets; its chemical tanks remain
+exposed independently. Do not use port mode as a proven fuel cutoff.
+
+The amplifier exposes redstone, delay and threshold setters. Its sampled
+redstone mode is `LOW`; sampled energy is 971810000, minimum threshold 2500000000
+and maximum energy 5000000000, all in the API's raw energy units. It is below
+its firing threshold at this snapshot. No chemical tank or Matrix appears on
+this network, and the fusion port exposes no generic inventory methods.
+
+The first probe incorrectly called the fusion port's `getMode` with chemical
+side arguments. Corrected probing uses the port's zero-argument signature;
+chemical side probing is restricted to peripherals exposing configuration
+capabilities. These getter errors did not change any machine settings.
