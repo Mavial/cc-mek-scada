@@ -1,0 +1,160 @@
+{
+  "baseline": "b229b286f4dd60e78beda845f0e2c3a2cbf2e258",
+  "roles": {
+    "agent": [
+      {
+        "path": "fusion/model.lua",
+        "hash": "fd9ad42695b3d6565b2fd067db2f313556a256a98638b8c4842e7c490998e6e2",
+        "allowed": []
+      },
+      {
+        "path": "fusion/config.lua",
+        "hash": "c256c796aaa1dd6d07ddc9ef1b7efe3913696569d703c6732831104ab477b266",
+        "allowed": []
+      },
+      {
+        "path": "fusion/configure.lua",
+        "hash": "11cf505560dd4a06fa03334c950b9326ab33258007449b8ac9c242a6d4cec8cd",
+        "allowed": []
+      },
+      {
+        "path": "fusion/startup.lua",
+        "hash": "7b3e9f25f027e46e4c5ed13283d704353b005c81e4b8869e6e40d838b30ed206",
+        "allowed": []
+      },
+      {
+        "path": "startup.lua",
+        "hash": "ba3004ec42152d6a44d55f1024ea194b1c81cab44bf66f4c9aea1ecdf18393f7",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/constants.lua",
+        "hash": "4a1048b19e7095b1930dffc96f5b3d06f8434537aa240930a4f73bbff61d33a8",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/util.lua",
+        "hash": "9bfd772caa6fe30af46b772a19ae30719a8eaf9af97237ba9808ca68400cfc73",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/log.lua",
+        "hash": "b5ac936995c7321d2007511eb7cb1afc5614661d515d8b853be22bee0f6ab1fd",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/ppm.lua",
+        "hash": "0088b7de4f819d49a48f7fece7e9a0efa21d25f48dd333379498aaa040e73106",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/comms.lua",
+        "hash": "404ec7b64d71374702f3ccfe668992dba77bc0e3bd325be6a65fcf18cb1cdd49",
+        "allowed": []
+      },
+      {
+        "path": "scada-common/network.lua",
+        "hash": "eb50f4bb86eea1c04eb986024f6aa26468c5f1a74be88d80f1723ecaa3559841",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/init.lua",
+        "hash": "ddb5c9c2a4fd820a976e7493c71c2bf0a43786abd98839dc154ddb1995fc81f1",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/util/bit.lua",
+        "hash": "6762080b9e5e7a857ed6ffeedf3ef257f1af4d141af9fe3a4d8381593f38e17c",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/util/queue.lua",
+        "hash": "58eb1ec721cdf0193ab0255f25079e7a761794ed4160cca973e71c1326aa45e6",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/util/stream.lua",
+        "hash": "59d7705290ed92ab64615bca8795ee187b46a8ae5198318e1f19c894fc85cf4a",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/util/array.lua",
+        "hash": "c574cb8888231090bcb56dfdd70954a07c178e2b486d788d986813ac237f32b5",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/digest/md5.lua",
+        "hash": "3851258294aff07bb78bb3649477246e2d03dd495acc92751bac03748d2a6967",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/digest/sha1.lua",
+        "hash": "c0fa63938a21db44bd4cfed9d667d9413b05d652117692258e2c33ca3907adac",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/digest/sha2_256.lua",
+        "hash": "c62566f0a2fdc8d51019c14b54903dd7de29f64d578236ef5334d568f93f3417",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/mac/hmac.lua",
+        "hash": "e19212ff0ad739b953aa30e2a0ca6531c0d53c0724d25a1a6fa52e08aaf4bff8",
+        "allowed": []
+      },
+      {
+        "path": "lockbox/kdf/pbkdf2.lua",
+        "hash": "3e96871872e279df4a784660fa76394f5816a13bcc089a6a43c5dac12577473e",
+        "allowed": []
+      }
+    ],
+    "coordinator": [
+      {
+        "path": "fusion/model.lua",
+        "hash": "fd9ad42695b3d6565b2fd067db2f313556a256a98638b8c4842e7c490998e6e2",
+        "allowed": []
+      },
+      {
+        "path": "fusion/config.lua",
+        "hash": "c256c796aaa1dd6d07ddc9ef1b7efe3913696569d703c6732831104ab477b266",
+        "allowed": []
+      },
+      {
+        "path": "fusion/configure.lua",
+        "hash": "11cf505560dd4a06fa03334c950b9326ab33258007449b8ac9c242a6d4cec8cd",
+        "allowed": []
+      },
+      {
+        "path": "fusion/view.lua",
+        "hash": "5e231f41053dd43882fc9f3dae43c099cf11e54b2c7b6bbd9a218beb74253739",
+        "allowed": []
+      },
+      {
+        "path": "coordinator/fusion.lua",
+        "hash": "080344cddbff571e3c52aed1566a5630de9baf9c6d39dc0019014978ac11369d",
+        "allowed": []
+      },
+      {
+        "path": "coordinator/ui/components/fusion_overview.lua",
+        "hash": "051cbc1e5e20ff0e99dbfb240be87cee7bdfb2425e6ca77d7e0a3b991cb814aa",
+        "allowed": []
+      },
+      {
+        "path": "coordinator/threads.lua",
+        "hash": "df7a4bf936c01467dc67aa2c0b26e6ce78a2144d206b185cf2d25bb2c48aba9c",
+        "allowed": [
+          "6fc2db022d6f371f8badf08e81678eaaeb8d4a41ce9d4783aa804b0ea413042e",
+          "b7cf1496f9ba52389f9f1a2f712660c1d57a16b9da4e934e37554a502867722c"
+        ]
+      },
+      {
+        "path": "coordinator/ui/layout/main_view.lua",
+        "hash": "1e3ff65647ca93f01c2f069c566984fbeb653cfb8084c587113e7048beba24d0",
+        "allowed": [
+          "7c3ad00b43f0df24e853dd9bfe7a76ed2c2e26d1da46c9e265eb868886845b10",
+          "2e82b3ca43bdc7acbf4251a7930256f9ebd3d4fa15e7e585644359c7f6f9261f"
+        ]
+      }
+    ]
+  }
+}

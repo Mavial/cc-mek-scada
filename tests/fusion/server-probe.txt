@@ -1,0 +1,311 @@
+{
+  utc_ms = 1791686174403,
+  computer_id = 9,
+  schema = 1,
+  peripherals = {
+    {
+      readings = {
+        getDTFuel = {
+          ok = true,
+          values = {
+            {
+              name = "mekanismgenerators:fusion_fuel",
+              amount = 500,
+            },
+          },
+        },
+        isFormed = {
+          ok = true,
+          values = {
+            true,
+          },
+        },
+        getCaseTemperature = {
+          ok = true,
+          values = {
+            19982561612.903442,
+          },
+        },
+        getIgnitionTemperature = {
+          ok = true,
+          values = {
+            100000001.11111112,
+          },
+        },
+        getDTFuelCapacity = {
+          ok = true,
+          values = {
+            500,
+          },
+        },
+        getProductionRate = {
+          ok = true,
+          values = {
+            199825616,
+          },
+        },
+        getHohlraum = {
+          ok = true,
+          values = {
+            {
+              components = "{\
+    data: [],\
+    palette: [],\
+    \"mekanism:chemicals\": {\
+        chemical_tanks: [\
+            {\
+                amount: 10L,\
+                id: \"mekanismgenerators:fusion_fuel\"\
+            }\
+        ]\
+    }\
+}",
+              count = 1,
+              name = "mekanismgenerators:hohlraum",
+            },
+          },
+        },
+        getPlasmaTemperature = {
+          ok = true,
+          values = {
+            44982561612.90535,
+          },
+        },
+        getTritium = {
+          ok = true,
+          values = {
+            {
+              name = "mekanism:empty",
+              amount = 0,
+            },
+          },
+        },
+        getInjectionRate = {
+          ok = true,
+          values = {
+            98,
+          },
+        },
+        isIgnited = {
+          ok = true,
+          values = {
+            true,
+          },
+        },
+        getDeuterium = {
+          ok = true,
+          values = {
+            {
+              name = "mekanism:empty",
+              amount = 0,
+            },
+          },
+        },
+      },
+      methods = {
+        "getCaseTemperature",
+        "getDTFuel",
+        "getDTFuelCapacity",
+        "getDTFuelFilledPercentage",
+        "getDTFuelNeeded",
+        "getDeuterium",
+        "getDeuteriumCapacity",
+        "getDeuteriumFilledPercentage",
+        "getDeuteriumNeeded",
+        "getEnvironmentalLoss",
+        "getHeight",
+        "getHohlraum",
+        "getIgnitionTemperature",
+        "getInjectionRate",
+        "getLength",
+        "getLogicMode",
+        "getMaxCasingTemperature",
+        "getMaxPlasmaTemperature",
+        "getMaxPos",
+        "getMinInjectionRate",
+        "getMinPos",
+        "getPassiveGeneration",
+        "getPlasmaTemperature",
+        "getProductionRate",
+        "getSteam",
+        "getSteamCapacity",
+        "getSteamFilledPercentage",
+        "getSteamNeeded",
+        "getTransferLoss",
+        "getTritium",
+        "getTritiumCapacity",
+        "getTritiumFilledPercentage",
+        "getTritiumNeeded",
+        "getWater",
+        "getWaterCapacity",
+        "getWaterFilledPercentage",
+        "getWaterNeeded",
+        "getWidth",
+        "help",
+        "isActiveCooledLogic",
+        "isFormed",
+        "isIgnited",
+        "setActiveCooledLogic",
+        "setInjectionRate",
+        "setLogicMode",
+      },
+      name = "fusionReactorLogicAdapter_0",
+      types = {
+        "fusionReactorLogicAdapter",
+      },
+    },
+    {
+      readings = {
+        chemical_sides = {
+          BACK = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+          FRONT = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+          BOTTOM = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+          RIGHT = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+          TOP = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+          LEFT = {
+            ok = false,
+            error = "Found 2 arguments, expected 0",
+          },
+        },
+        getMaxEnergy = {
+          ok = true,
+          values = {
+            1000000000,
+          },
+        },
+        getEnergyFilledPercentage = {
+          ok = true,
+          values = {
+            0.997434528,
+          },
+        },
+        getEnergy = {
+          ok = true,
+          values = {
+            997434528,
+          },
+        },
+      },
+      methods = {
+        "getEnergy",
+        "getEnergyFilledPercentage",
+        "getEnergyNeeded",
+        "getMaxEnergy",
+        "getMode",
+        "help",
+        "setMode",
+      },
+      name = "fusionReactorPort_0",
+      types = {
+        "fusionReactorPort",
+      },
+    },
+    {
+      readings = {
+        getMaxThreshold = {
+          ok = true,
+          values = {
+            5000000000,
+          },
+        },
+        getMaxEnergy = {
+          ok = true,
+          values = {
+            5000000000,
+          },
+        },
+        getRedstoneOutputMode = {
+          ok = true,
+          values = {
+            "ENERGY_CONTENTS",
+          },
+        },
+        getDirection = {
+          ok = true,
+          values = {
+            "WEST",
+          },
+        },
+        getDelay = {
+          ok = true,
+          values = {
+            0,
+          },
+        },
+        getRedstoneMode = {
+          ok = true,
+          values = {
+            "LOW",
+          },
+        },
+        getEnergyFilledPercentage = {
+          ok = true,
+          values = {
+            0.194378,
+          },
+        },
+        getMinThreshold = {
+          ok = true,
+          values = {
+            2500000000,
+          },
+        },
+        getEnergy = {
+          ok = true,
+          values = {
+            971810000,
+          },
+        },
+      },
+      methods = {
+        "getComparatorLevel",
+        "getDelay",
+        "getDiggingPos",
+        "getDirection",
+        "getEnergy",
+        "getEnergyFilledPercentage",
+        "getEnergyNeeded",
+        "getMaxEnergy",
+        "getMaxThreshold",
+        "getMinThreshold",
+        "getOwnerName",
+        "getOwnerUUID",
+        "getRedstoneMode",
+        "getRedstoneOutputMode",
+        "getSecurityMode",
+        "help",
+        "setDelay",
+        "setMaxThreshold",
+        "setMinThreshold",
+        "setRedstoneMode",
+        "setRedstoneOutputMode",
+      },
+      name = "laserAmplifier_0",
+      types = {
+        "laserAmplifier",
+      },
+    },
+    {
+      name = "right",
+      types = {
+        "modem",
+        "peripheral_hub",
+      },
+    },
+  },
+}

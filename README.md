@@ -1,10 +1,13 @@
 # cc-mek-scada
 
-**Fork integration branch:** [fusion and fission facility control design](docs/fusion-facility-control.md).
-This branch currently preserves the seven-wide Coordinator screens and includes
-a [read-only fusion commissioning probe](tools/fusion-probe.lua). Automatic fusion
-facility control is not implemented or ready to install yet. The upstream
-installation links below install upstream releases, not this integration branch.
+**This fork:** [integrated read-only fusion monitoring](docs/fusion-monitoring.md)
+adds a Fusion 4x4 display and a facility generation summary, preserving the
+seven-wide Coordinator screens. A separate fusion computer sends telemetry;
+existing fission control and fusion operation continue as configured.
+Use [install-fusion.lua](install-fusion.lua) for this extension. The upstream
+installation links below install upstream releases and can overwrite the fork's
+Coordinator changes. The earlier [automatic-control design](docs/fusion-facility-control.md)
+is retained as a future proposal after the user chose monitoring only.
 
 Configurable ComputerCraft SCADA system for multi-reactor control of Mekanism fission reactors with a GUI, automatic safety features, waste processing control, and more! 
 

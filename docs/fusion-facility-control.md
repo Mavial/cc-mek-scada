@@ -1,6 +1,9 @@
 # Fusion and fission facility control
 
-Status: implementation design and commissioning probe; not an installable control release.
+Status: archived future proposal. The user subsequently chose to keep existing
+fusion operation and omit start/stop and automatic dispatch. The delivered scope
+is [read-only fusion monitoring](fusion-monitoring.md). The original requirements
+below describe the earlier proposal, not the monitoring release.
 
 ## Delivery contract
 

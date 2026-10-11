@@ -9,6 +9,7 @@ local coordinator = require("coordinator.coordinator")
 local ioctl       = require("coordinator.ioctl")
 local process     = require("coordinator.process")
 local renderer    = require("coordinator.renderer")
+local fusion      = require("coordinator.fusion")
 local sounder     = require("coordinator.sounder")
 
 local apisessions = require("coordinator.session.apisessions")
@@ -47,6 +48,7 @@ function threads.thread__main(smem)
         local crd_state       = smem.crd_state
         local coord_comms     = smem.crd_sys.coord_comms
         local conn_watchdog   = smem.crd_sys.conn_watchdog
+        fusion.init(backplane, coordinator.config)
 
         local MQ__RENDER_CMD  = smem.q_types.MQ__RENDER_CMD
         local MQ__RENDER_DATA = smem.q_types.MQ__RENDER_DATA
@@ -59,6 +61,7 @@ function threads.thread__main(smem)
 
             -- periodic hardware tasks
             backplane.periodic()
+            fusion.tick(ioctl.get_db(), renderer.ui_ready())
 
             -- maintain connection
             local ok, start_ui = coord_comms.manage_link()
@@ -97,17 +100,21 @@ function threads.thread__main(smem)
 
             -- handle event
             if event == "modem_message" then
-                -- got a packet
-                local packet = coord_comms.parse_packet(param1, param2, param3, param4, param5)
+                if fusion.receive(param1, param2, param3, param4, param5) then
+                    -- Dedicated telemetry channel; no fission command handling.
+                else
+                    -- got a packet
+                    local packet = coord_comms.parse_packet(param1, param2, param3, param4, param5)
 
-                -- handle then check if it was a disconnect
-                if coord_comms.handle_packet(packet) then
-                    log_comms("supervisor closed connection")
+                    -- handle then check if it was a disconnect
+                    if coord_comms.handle_packet(packet) then
+                        log_comms("supervisor closed connection")
 
-                    -- close main UI, connection, and stop sounder
-                    smem.q.mq_render.push_command(MQ__RENDER_CMD.CLOSE_MAIN_UI)
-                    coord_comms.close()
-                    sounder.stop()
+                        -- close main UI, connection, and stop sounder
+                        smem.q.mq_render.push_command(MQ__RENDER_CMD.CLOSE_MAIN_UI)
+                        coord_comms.close()
+                        sounder.stop()
+                    end
                 end
             elseif event == "timer" then
                 -- pass this timer event onto the right handler

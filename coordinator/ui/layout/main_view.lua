@@ -13,6 +13,8 @@ local ecore         = require("coordinator.ui.components.ecore")
 local imatrix       = require("coordinator.ui.components.imatrix")
 local process_ctl   = require("coordinator.ui.components.process_ctl")
 local unit_overview = require("coordinator.ui.components.unit_overview")
+local fusion        = require("coordinator.fusion")
+local fusion_overview = require("coordinator.ui.components.fusion_overview")
 
 local core          = require("graphics.core")
 
@@ -60,6 +62,13 @@ local function init(main)
     if fac.num_units >= 2 then
         uo_2 = unit_overview(main, 84, 3, units[2])
         row_1_height = math.max(row_1_height, uo_2.get_height())
+    end
+
+    if fac.num_units == 1 and fusion.enabled() then
+        -- The seven-wide layout uses columns 84..104 for the waste controls.
+        local fusion_x = util.trinary(compact, 107, 84)
+        local summary = fusion_overview(main, fusion_x, 3, main.get_width() - fusion_x)
+        row_1_height = math.max(row_1_height, summary.get_height())
     end
 
     cnc_y_start = cnc_y_start + row_1_height + 1
