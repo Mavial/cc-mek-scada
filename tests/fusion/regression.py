@@ -168,12 +168,22 @@ def preview(lua, name):
     palette=['#f0f0f0','#f2b233','#e57fd8','#99b2f2','#dede6c','#7fcc19','#f2b2cc','#4c4c4c',
              '#999999','#4c99b2','#b266e5','#3366cc','#7f664c','#57a64e','#cc4c4c','#111111']
     w,h=lua.globals().screen.getSize(); img=Image.new('RGB',(w*10,h*16));draw=ImageDraw.Draw(img)
+    for i in range(16):
+        override=lua.globals().screen._palette[2**i]
+        if override is not None:palette[i]=f'#{int(override):06x}'
     fonts=[Path('C:/Windows/Fonts/consola.ttf'),Path('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf')]
     font=next((ImageFont.truetype(str(p),13) for p in fonts if p.exists()),ImageFont.load_default())
     for y,(text,fg,bg) in enumerate(frame(lua)):
         for x,ch in enumerate(text):
             draw.rectangle((x*10,y*16,(x+1)*10-1,(y+1)*16-1),fill=palette[int(bg[x],16)])
-            if ch!=' ':draw.text((x*10,y*16),ch if 32<=ord(ch)<127 else '.',font=font,fill=palette[int(fg[x],16)])
+            code=ord(ch)
+            if 128<=code<160:
+                mask=code-128
+                for bit in range(5):
+                    if mask & (1<<bit):
+                        xx,yy=x*10+(bit%2)*5,y*16+(bit//2)*16//3
+                        draw.rectangle((xx,yy,xx+4,y*16+((bit//2)+1)*16//3-1),fill=palette[int(fg[x],16)])
+            elif ch!=' ':draw.text((x*10,y*16),ch if 32<=code<127 or code in [176,181,183] else '.',font=font,fill=palette[int(fg[x],16)])
     out=HERE/'previews';out.mkdir(exist_ok=True);img.save(out/(name+'.png'))
 
 def render_tests():
@@ -370,7 +380,93 @@ def configure_tests():
     settings=json.loads(fs.files['/fusion/settings.json'])
     check(settings['monitor']=='monitor_fusion' and settings['source']==9,'wizard rejected actual 4x4 screen / wrong computer')
 
+def native_style_tests():
+    for theme in [1,2]:
+        for mode in [1,2,5,6]:
+            lua=runtime();data=snapshot(lua)
+            lua.eval('require("coordinator.ui.style").set_themes')(theme,1,mode)
+            lua.globals().setup_monitor(79,52);lua.execute('screen.setTextScale=function() end')
+            context=lua.table_from({'age':2300,'source':9,'name':'fusion-test','color_mode':mode,'fission':2249750,
+                'energy_label':'FE','temp_label':'\xb0C','energy_convert':lua.eval('function(v) return v*0.4 end'),
+                'temp_convert':lua.eval('function(v) return v-273.15 end')})
+            draw=lua.eval('require("fusion.view").draw');draw(lua.globals().screen,data,context)
+            windows=len(lua.globals().all_windows)
+            draw(lua.globals().screen,data,context)
+            check(len(lua.globals().all_windows)==windows,'native screen rebuilt on normal telemetry refresh')
+            check(lua.globals().screen._palette[lua.globals().colors.gray] is not None,'native palette not applied')
+            for values in [{'ignited':False,'production':0,'port_energy':0,'dt':0},
+                {'production':1e60,'plasma':1e60,'casing':1e60}, {'plasma':263.15,'casing':273.15},
+                {'production':None,'laser_energy':None,'port_energy':None,'dt':None,'dt_capacity':None}]:
+                for key,val in values.items():data[key]=val
+                draw(lua.globals().screen,data,context)
+                check(len(lua.globals().clips)==0,'native fields clip on zeros/large/unknown values')
+            draw(lua.globals().screen,None,context)
+            text='\n'.join(row[0] for row in frame(lua))
+            check('NO LIVE DATA' in text and 'OFFLINE' in text and '79.93' not in text,'native stale values retained')
+            check(len(lua.globals().clips)==0,'offline native screen clips')
+    # A changed terminal/theme and a reconnect rebuild safely; units follow SCADA.
+    lua=runtime();data=snapshot(lua);lua.globals().setup_monitor(79,52);lua.execute('screen.setTextScale=function() end')
+    context=lua.table_from({'age':100,'fission':None,'source':9,'energy_label':'J','temp_label':'K',
+        'energy_convert':lua.eval('function(v) return v end'),'temp_convert':lua.eval('function(v) return v end')})
+    view=lua.eval('require("fusion.view")');view.draw(lua.globals().screen,data,context)
+    text='\n'.join(row[0] for row in frame(lua))
+    check('199.83 MJ/t' in text and 'Fission total unavailable' in text,'J units / unavailable fission wrong')
+    view.reset();view.draw(lua.globals().screen,data,context)
+    check(len(lua.globals().clips)==0,'native reconnect clips')
+    lua.globals().setup_monitor(79,51);lua.execute('screen.setTextScale=function() end')
+    view.draw(lua.globals().screen,data,context)
+    check('needs a 4x4' in '\n'.join(row[0] for row in frame(lua)),'undersized screen not rejected')
+
+def style_installer_tests():
+    global INSTALLER, MANIFEST
+    old_installer,old_manifest=INSTALLER,MANIFEST
+    INSTALLER=(ROOT/'install-fusion-style.lua').read_text()
+    MANIFEST=json.loads((ROOT/'fusion/style-manifest.json').read_text())
+    try:
+        fs=fixture('coordinator');before=fs.snapshot()
+        check(installer_runtime(fs,'check','coordinator')[0] and before==fs.snapshot(),'style check mutated files')
+        ok,detail=installer_runtime(fs,'install','coordinator');check(ok,'style install failed: '+str(detail))
+        installed(fs,'coordinator');mutations=list(fs.mutations);saved=fs.snapshot()
+        check(installer_runtime(fs,'install','coordinator')[0] and fs.snapshot()==saved,'style reinstall not idempotent')
+        check(installer_runtime(fs,'undo','coordinator')[0],'style undo failed');original(fs,before[0],'coordinator')
+        for index in range(1,len(mutations)+1):
+            for when in ['before','after']:
+                fs=fixture('coordinator');files=copy.deepcopy(fs.files);fs.cut_at=(index,when)
+                check(not installer_runtime(fs,'install','coordinator')[0],'style interruption ignored')
+                resumed=fs.resumed();ok,detail=installer_runtime(resumed,'recover','coordinator')
+                check(ok,f'style recovery #{index} {when}: {detail}');original(resumed,files,'coordinator')
+        fs=fixture('coordinator');installer_runtime(fs,'install','coordinator')
+        fs.files['/fusion/view.lua']=b'-- user edit';saved=fs.snapshot()
+        check(not installer_runtime(fs,'undo','coordinator')[0] and saved==fs.snapshot(),'style undo overwrote user edits')
+        fs=fixture('agent');saved=fs.snapshot()
+        check(not installer_runtime(fs,'install','agent')[0] and saved==fs.snapshot(),'style updater accepted fusion agent computer')
+        # Upgrade the exact previously deployed installer, including its minified files
+        # and existing undo journal, then unwind both updates in the documented order.
+        style_installer,style_manifest=INSTALLER,MANIFEST
+        deployed=style_manifest['baseline']
+        INSTALLER=subprocess.check_output(['git','show',deployed+':install-fusion.lua'],cwd=ROOT).decode()
+        MANIFEST=json.loads(subprocess.check_output(['git','show',deployed+':fusion/install-manifest.json'],cwd=ROOT))
+        deployed_installer,deployed_manifest=INSTALLER,MANIFEST
+        fs=fixture('coordinator');initial=copy.deepcopy(fs.files)
+        ok,detail=installer_runtime(fs,'install','coordinator');check(ok,'deployed installation failed: '+str(detail))
+        commissioned=copy.deepcopy(fs.files)
+        INSTALLER,MANIFEST=style_installer,style_manifest
+        ok,detail=installer_runtime(fs,'install','coordinator');check(ok,'deployed style upgrade failed: '+str(detail))
+        installed(fs,'coordinator')
+        touched={'/'+row['path'] for row in MANIFEST['roles']['coordinator']}
+        check(all(fs.files.get(path)==body for path,body in commissioned.items() if path not in touched),
+              'style upgrade changed configuration, telemetry or the original undo journal')
+        check(installer_runtime(fs,'undo','coordinator')[0],'deployed style undo failed')
+        check(fs.files==commissioned,'style undo did not restore the commissioned installation exactly')
+        INSTALLER,MANIFEST=deployed_installer,deployed_manifest
+        check(installer_runtime(fs,'undo','coordinator')[0],'original undo after style undo failed')
+        original(fs,initial,'coordinator')
+        print(f'PASS style update: {len(mutations)*2} interruption boundaries',flush=True)
+    finally:
+        INSTALLER,MANIFEST=old_installer,old_manifest
+
 if __name__=='__main__':
-    for name,test in [('model',model_tests),('NIC/HMAC',network_tests),('graphics',render_tests),('installer',installer_tests),('agent boot',agent_boot_tests),('configure',configure_tests)]:
+    for name,test in [('model',model_tests),('NIC/HMAC',network_tests),('graphics',render_tests),('native style',native_style_tests),
+        ('installer',installer_tests),('style installer',style_installer_tests),('agent boot',agent_boot_tests),('configure',configure_tests)]:
         test();print('PASS '+name,flush=True)
     print(f'{COUNT} checks passed',flush=True)

@@ -126,12 +126,12 @@
       },
       {
         "path": "fusion/view.lua",
-        "hash": "5e231f41053dd43882fc9f3dae43c099cf11e54b2c7b6bbd9a218beb74253739",
+        "hash": "3edbde1680af1159ed97a0fa091379245c63397c9c4b9f1ec4f845fc7618fa45",
         "allowed": []
       },
       {
         "path": "coordinator/fusion.lua",
-        "hash": "080344cddbff571e3c52aed1566a5630de9baf9c6d39dc0019014978ac11369d",
+        "hash": "76aa68e4048aa6ccc3b91d54e3dfc2aa90a3688734232c51495ed05d4b73b406",
         "allowed": []
       },
       {

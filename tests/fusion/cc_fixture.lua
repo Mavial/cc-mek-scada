@@ -63,7 +63,11 @@ local function create_window(parent,x,y,w,h,visible)
     win.getBackgroundColour=win.getBackgroundColor
     function win.isColor() return true end
     win.isColour=win.isColor
-    function win.setPaletteColor() end
+    win._palette={}
+    function win.setPaletteColor(c,hex,g,b)
+        if g then hex=math.floor(hex*255)*65536+math.floor(g*255)*256+math.floor(b*255) end
+        win._palette[c]=hex
+    end
     win.setPaletteColour=win.setPaletteColor
     function win.getPaletteColor() return 0,0,0 end
     win.getPaletteColour=win.getPaletteColor

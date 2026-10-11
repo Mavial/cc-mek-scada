@@ -66,7 +66,10 @@ local function render(db, ui_ready)
     display = peripheral.wrap(options.monitor)
     if display and peripheral.hasType(options.monitor,"monitor") then
         view.draw(display,data,{age=age,fission=fission,energy_convert=db.energy_convert,
-            energy_label=db.energy_label,temp_convert=db.temp_convert,temp_label=db.temp_label})
+            energy_label=db.energy_label,temp_convert=db.temp_convert,temp_label=db.temp_label,
+            name=options.monitor,source=options.source,color_mode=coordinator_config.ColorMode})
+    else
+        view.reset()
     end
 end
 
@@ -77,6 +80,7 @@ function fusion.tick(db, ui_ready)
     if not db or not db.units or not db.energy_convert then return end
     local ok,err = pcall(render,db,ui_ready)
     if not ok and tostring(err) ~= last_error then
+        view.reset()
         last_error = tostring(err)
         log.warning("FUSION: optional display unavailable: " .. last_error)
     elseif ok then last_error=nil end

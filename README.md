@@ -4,7 +4,9 @@
 adds a Fusion 4x4 display and a facility generation summary, preserving the
 seven-wide Coordinator screens. A separate fusion computer sends telemetry;
 existing fission control and fusion operation continue as configured.
-Use [install-fusion.lua](install-fusion.lua) for this extension. The upstream
+Use [install-fusion.lua](install-fusion.lua) for this extension, or
+[install-fusion-style.lua](install-fusion-style.lua) to update an existing fusion
+display to native SCADA styling on the Coordinator only. The upstream
 installation links below install upstream releases and can overwrite the fork's
 Coordinator changes. The earlier [automatic-control design](docs/fusion-facility-control.md)
 is retained as a future proposal after the user chose monitoring only.

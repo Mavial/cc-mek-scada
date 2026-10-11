@@ -66,11 +66,38 @@ Choose the new 4x4 screen, enter fusion computer ID **9**, and keep channel
 identifies candidate monitors on-screen. Run `startup` to resume SCADA.
 The existing Supervisor, PLC and RTU need no update.
 
+## Visual update for an existing installation
+
+If fusion monitoring is already running, use `install-fusion-style.lua` on the
+**Coordinator only**. The separate fusion computer keeps its existing software.
+Hold Ctrl+T on the Coordinator, download the published visual updater to
+`/install-fusion-style.lua`, then run:
+
+```text
+cd /
+install-fusion-style coordinator
+startup
+```
+
+This update replaces only `fusion/view.lua` and `coordinator/fusion.lua`. It
+preserves the selected monitor, source computer, telemetry channel, authentication
+key and all SCADA settings; no configuration wizard is needed. The fusion display
+uses native SCADA panels, value indicators, status lights and fill bars, following
+the Coordinator's theme, colour mode and chosen energy/temperature units.
+
+To undo just this visual update, stop the Coordinator and run
+`install-fusion-style undo coordinator`, then `startup`. If interrupted, run
+`install-fusion-style recover coordinator` before repeating the update. Retain
+`/.scada-fusion-style-1/coordinator` for its backups and transaction journal.
+To remove the entire extension installed before this visual update, undo the
+visual update first, then use the original `install-fusion undo coordinator`.
+
 ## Readings and checks
 
 The detail screen shows fusion output, fission turbine output and their sum,
 plasma/casing temperatures, fuel tanks, injection setting, reactor energy buffer,
-laser stored energy/minimum threshold, Hohlraum charge and laser redstone mode.
+laser stored energy/minimum and maximum thresholds, Hohlraum charge and laser
+redstone mode. Laser charge progress is measured against its minimum threshold.
 Use the machine GUIs to confirm these readings on first installation.
 
 Mekanism energy getters return joules. The Coordinator uses its existing energy
@@ -118,7 +145,8 @@ The installer stages and verifies all files before modifying a live application.
 
 ## Local validation
 
-Run `python tools/build-fusion-installer.py`, then `python tests/fusion/regression.py`
+Run `python tools/build-fusion-style-installer.py` to regenerate both the full
+installer and visual updater, then `python tests/fusion/regression.py`
 with `lupa` (Lua 5.2) installed. Pillow optionally creates screen previews.
 The suite uses the actual server commissioning readings, getter whitelist,
 native SCADA NIC/authenticated frames, native graphics/pubsub/touch handling,
@@ -127,3 +155,6 @@ It checks stale/reordered/malformed data, unchanged disabled layouts, protected
 existing panels, display fit, boot dependencies, and recovery before/after every
 installation filesystem mutation. Host APIs are simulated; actual Minecraft
 enumeration and first commissioning remain in-game checks.
+The visual update is also exercised against the exact previously published
+installer, including a complete undo through both backup layers. Native display
+tests cover both themes, colour modes, units, unavailable data and extreme values.

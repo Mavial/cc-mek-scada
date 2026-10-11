@@ -1,0 +1,23 @@
+{
+  "baseline": "a5b921b205d25b45ce88bfc4a5ad55d211abd1c1",
+  "roles": {
+    "coordinator": [
+      {
+        "path": "fusion/view.lua",
+        "hash": "3edbde1680af1159ed97a0fa091379245c63397c9c4b9f1ec4f845fc7618fa45",
+        "allowed": [
+          "eab1bc742027b9726a5e5d1644878a3bc0bd3868e52417597e793dfdab9fb880",
+          "5e231f41053dd43882fc9f3dae43c099cf11e54b2c7b6bbd9a218beb74253739"
+        ]
+      },
+      {
+        "path": "coordinator/fusion.lua",
+        "hash": "76aa68e4048aa6ccc3b91d54e3dfc2aa90a3688734232c51495ed05d4b73b406",
+        "allowed": [
+          "7d710f9ab1b48aa82ec5a31c585643b2182b00fa8c8b250cb415725f506cf20f",
+          "080344cddbff571e3c52aed1566a5630de9baf9c6d39dc0019014978ac11369d"
+        ]
+      }
+    ]
+  }
+}
