@@ -30,6 +30,12 @@ local function init(main)
     local fac   = ioctl.get_db().facility
     local units = ioctl.get_db().units
 
+    local compact = main.get_width() < 162
+    if compact then
+        assert(main.get_width() >= 141, "compact main display needs seven monitor blocks of width")
+        assert(fac.num_units == 1, "compact main display supports one reactor unit; use eight-wide for multiple units")
+    end
+
     -- window header message
     local header = TextBox{parent=main,y=1,text="Nuclear Generation Facility SCADA Coordinator",alignment=ALIGN.CENTER,fg_bg=s_header}
     local ping = DataIndicator{parent=main,y=1,label="SVTT",format="%d",value=0,unit="ms",lu_colors=style.lg_white,width=12,fg_bg=s_header}
@@ -86,14 +92,14 @@ local function init(main)
 
     cnc_bottom_align_start = cnc_bottom_align_start + 2
 
-    process_ctl(main, 2, cnc_bottom_align_start)
+    process_ctl(main, 2, cnc_bottom_align_start, compact)
 
     util.nop()
 
     if fac.ess_type == types.ESS.INDUCTION_MATRIX then
-        imatrix(main, 131, cnc_bottom_align_start, fac.induction_ps_tbl[1])
+        imatrix(main, util.trinary(compact, 109, 131), cnc_bottom_align_start, fac.induction_ps_tbl[1])
     elseif fac.ess_type == types.ESS.ENERGY_CORE then
-        ecore(main, 131, cnc_bottom_align_start, fac.ecore_ps_tbl[1])
+        ecore(main, util.trinary(compact, 109, 131), cnc_bottom_align_start, fac.ecore_ps_tbl[1])
     end
 end
 

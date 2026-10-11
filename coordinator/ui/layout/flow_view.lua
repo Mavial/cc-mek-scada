@@ -56,6 +56,16 @@ local function init(main)
 
     local com_waste = fac.combined_waste
 
+    -- Seven-block monitors use the existing narrow diagrams and move the
+    -- facility statistics left. Eight-block monitors keep the upstream layout.
+    local compact = main.get_width() < 162
+    local right_shift = tri(compact, 22, 0)
+
+    if compact then
+        assert(main.get_width() >= 141, "seven-wide flow display needs at least seven monitor blocks")
+        assert(fac.num_units == 1, "seven-wide flow display supports one reactor unit; use eight-wide for multiple units")
+    end
+
     -- window header message
     local header = TextBox{parent=main,y=1,text="Facility Coolant and Waste Flow Monitor",alignment=ALIGN.CENTER,fg_bg=style.theme.header}
     -- max length example: "01:23:45 AM - Wednesday, September 28 2022"
@@ -78,6 +88,18 @@ local function init(main)
             if i > 1 then only_top_tank = false end
         end
     end
+
+    if compact then
+        assert(no_tanks, "seven-wide flow display does not support emergency tanks; use eight-wide for emergency tanks")
+        for _, unit in ipairs(units) do
+            assert(not unit.has_tank, "seven-wide flow display does not support emergency tanks; use eight-wide for emergency tanks")
+        end
+        for _, tank_def in ipairs(tank_defs) do
+            assert(tank_def == 0, "seven-wide flow display does not support emergency tanks; use eight-wide for emergency tanks")
+        end
+    end
+
+    local wide_diagrams = no_tanks and not compact
 
     local compressed_view = com_waste and (no_tanks or only_top_tank or (fac.tank_mode == 1 and num_tanks == 1))
 
@@ -310,7 +332,7 @@ local function init(main)
     for i = 1, fac.num_units do
         local y_offset = y_ofs(i)
 
-        unit_flow(main, flow_x, 5 + y_offset, no_tanks, com_waste, i)
+        unit_flow(main, flow_x, 5 + y_offset, wide_diagrams, com_waste, i)
 
         if not com_waste then
             table.insert(po_pipes, pipe(0, 3 + y_offset, 4, 0, colors.green, true, true))
@@ -324,9 +346,9 @@ local function init(main)
     ---------------------------------
 
     if com_waste then
-        local waste = Div{parent=main,x=flow_x,y=com_waste_y_ofs+tri(compressed_view,3,-6),width=tri(no_tanks,139,117),height=11}
+        local waste = Div{parent=main,x=flow_x,y=com_waste_y_ofs+tri(compressed_view,3,-6),width=tri(wide_diagrams,139,117),height=11}
 
-        waste_flow(waste, 18, 1, no_tanks, com_waste, { "pu", "po", "pl", "am" }, { "PV01-PU", "PV02-PO", "PV03-PL", "PV04-AM" }, fac.ps)
+        waste_flow(waste, 18, 1, wide_diagrams, com_waste, { "pu", "po", "pl", "am" }, { "PV01-PU", "PV02-PO", "PV03-PL", "PV04-AM" }, fac.ps)
 
         local waste_rate = DataIndicator{parent=waste,x=4,y=3,lu_colors=lu_c,label="",unit="mB/t",format="%8.2f",value=0,width=13,fg_bg=s_field}
         waste_rate.register(fac.ps, "burn_sum", waste_rate.update)
@@ -335,9 +357,9 @@ local function init(main)
 
         TextBox{parent=waste,x=1,y=2,text="\x1a",fg_bg=cpair(colors.brown,text_c.bkg),width=1}
 
-        PipeNetwork{parent=main,x=141,y=15,pipes={pipe(0,com_waste_y_ofs-tri(compressed_view,4,13),2,0,colors.green,true,true)},bg=style.theme.bg}
+        PipeNetwork{parent=main,x=141-right_shift,y=15,pipes={pipe(0,com_waste_y_ofs-tri(compressed_view,4,13),2,0,colors.green,true,true)},bg=style.theme.bg}
     else
-        PipeNetwork{parent=main,x=139,y=15,pipes=po_pipes,bg=style.theme.bg}
+        PipeNetwork{parent=main,x=139-right_shift,y=15,pipes=po_pipes,bg=style.theme.bg}
     end
 
     -----------------
@@ -372,7 +394,7 @@ local function init(main)
             local vy = 3 + y_ofs(i)
 
             if no_tanks then
-                vx = tri(units[i].num_boilers == 0, 36, 79)
+                vx = tri(units[i].num_boilers == 0, 36, tri(compact, 69, 79))
             else
                 local em_water = tank_types[tank_conns[i]] == COOLANT_TYPE.WATER
                 vx = tri(units[i].num_boilers == 0, 58, tri(units[i].has_tank and em_water, 94, 91))
@@ -467,7 +489,7 @@ local function init(main)
     -- SPS --
     ---------
 
-    local sps = Div{parent=main,x=140,y=3,height=12}
+    local sps = Div{parent=main,x=140-right_shift,y=3,height=12}
 
     TextBox{parent=sps,text=" ",width=24,y=1,fg_bg=style.lg_gray}
     TextBox{parent=sps,text="SPS",alignment=ALIGN.CENTER,width=24,fg_bg=wh_gray}
@@ -492,14 +514,14 @@ local function init(main)
     -- statistics --
     ----------------
 
-    TextBox{parent=main,x=145,y=16,text="RAW WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
-    local raw_waste  = Rectangle{parent=main,x=145,y=17,border=border(1,colors.gray,true),width=19,height=3,thin=true,fg_bg=s_hi_bright}
+    TextBox{parent=main,x=145-right_shift,y=16,text="RAW WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
+    local raw_waste  = Rectangle{parent=main,x=145-right_shift,y=17,border=border(1,colors.gray,true),width=19,height=3,thin=true,fg_bg=s_hi_bright}
     local sum_raw_waste = DataIndicator{parent=raw_waste,lu_colors=lu_c_d,label="SUM",unit="mB/t",format="%8.2f",value=0,width=17}
 
     sum_raw_waste.register(fac.ps, "burn_sum", sum_raw_waste.update)
 
-    TextBox{parent=main,x=145,y=21,text="PROC. WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
-    local pr_waste  = Rectangle{parent=main,x=145,y=22,border=border(1,colors.gray,true),width=19,height=5,thin=true,fg_bg=s_hi_bright}
+    TextBox{parent=main,x=145-right_shift,y=21,text="PROC. WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
+    local pr_waste  = Rectangle{parent=main,x=145-right_shift,y=22,border=border(1,colors.gray,true),width=19,height=5,thin=true,fg_bg=s_hi_bright}
     local pu = DataIndicator{parent=pr_waste,lu_colors=lu_c_d,label="Pu",unit="mB/t",format="%9.3f",value=0,width=17}
     local po = DataIndicator{parent=pr_waste,lu_colors=lu_c_d,label="Po",unit="mB/t",format="%9.2f",value=0,width=17}
     local popl = DataIndicator{parent=pr_waste,lu_colors=lu_c_d,label="PoPl",unit="mB/t",format="%7.2f",value=0,width=17}
@@ -508,8 +530,8 @@ local function init(main)
     po.register(fac.ps, "po_rate", po.update)
     popl.register(fac.ps, "po_pl_rate", popl.update)
 
-    TextBox{parent=main,x=145,y=28,text="SPENT WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
-    local sp_waste  = Rectangle{parent=main,x=145,y=29,border=border(1,colors.gray,true),width=19,height=3,thin=true,fg_bg=s_hi_bright}
+    TextBox{parent=main,x=145-right_shift,y=28,text="SPENT WASTE",alignment=ALIGN.CENTER,width=19,fg_bg=wh_gray}
+    local sp_waste  = Rectangle{parent=main,x=145-right_shift,y=29,border=border(1,colors.gray,true),width=19,height=3,thin=true,fg_bg=s_hi_bright}
     local sum_sp_waste = DataIndicator{parent=sp_waste,lu_colors=lu_c_d,label="SUM",unit="mB/t",format="%8.3f",value=0,width=17}
 
     sum_sp_waste.register(fac.ps, "spent_waste_rate", sum_sp_waste.update)

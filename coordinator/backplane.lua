@@ -93,9 +93,9 @@ function backplane.init_displays(config)
 
     disp.setTextScale(0.5)
     w, _ = ppm.monitor_block_size(disp.getSize())
-    if w ~= 8 then
+    if w ~= 8 and not (w == 7 and config.UnitCount == 1) then
         log.info("BKPLN: DISPLAY MAIN/" .. iface .. " BAD RESOLUTION")
-        return false, util.c("Main monitor width is incorrect (was ", w, ", must be 8).")
+        return false, util.c("Main monitor width is incorrect (was ", w, ", must be 8, or 7 for one reactor unit).")
     end
 
     -- flow display
@@ -116,9 +116,9 @@ function backplane.init_displays(config)
 
     disp.setTextScale(0.5)
     w, _ = ppm.monitor_block_size(disp.getSize())
-    if w ~= 8 then
+    if w ~= 8 and not (w == 7 and config.UnitCount == 1) then
         log.info("BKPLN: DISPLAY FLOW/" .. iface .. " BAD RESOLUTION")
-        return false, util.c("Flow monitor width is incorrect (was ", w, ", must be 8).")
+        return false, util.c("Flow monitor width is incorrect (was ", w, ", must be 8, or 7 for one reactor unit).")
     end
 
     -- unit display(s)

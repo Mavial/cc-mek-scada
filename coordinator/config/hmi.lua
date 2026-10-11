@@ -272,15 +272,16 @@ function hmi.create(tool_ctl, main_pane, cfg_sys, divs, style)
         local asterisk = util.trinary(tool_ctl.sv_cool_conf == nil, "*", "")
         local m_at_least = util.trinary(tool_ctl.main_mon_h < 6, "at least ", "")
         local f_at_least = util.trinary(tool_ctl.flow_mon_h < 6, "at least ", "")
+        local overview_width = util.trinary(tmp_cfg.UnitCount == 1, "7 or 8", "8")
 
         mon_reqs.remove_all()
 
         TextBox{parent=mon_reqs,y=1,text="\x1a "..tmp_cfg.UnitCount.." Unit View Monitor"..util.trinary(plural,"s","")}
         TextBox{parent=mon_reqs,y=1,text="  "..util.trinary(plural,"each ","").."must be 4 blocks wide by 4 tall",fg_bg=cpair(colors.gray,colors.white)}
         TextBox{parent=mon_reqs,y=1,text="\x1a 1 Main View Monitor"}
-        TextBox{parent=mon_reqs,y=1,text="  must be 8 blocks wide by "..m_at_least..tool_ctl.main_mon_h..asterisk.." tall",fg_bg=cpair(colors.gray,colors.white)}
+        TextBox{parent=mon_reqs,y=1,text="  must be "..overview_width.." blocks wide by "..m_at_least..tool_ctl.main_mon_h..asterisk.." tall",fg_bg=cpair(colors.gray,colors.white)}
         TextBox{parent=mon_reqs,y=1,text="\x1a 1 Flow View Monitor"}
-        TextBox{parent=mon_reqs,y=1,text="  must be 8 blocks wide by "..f_at_least..tool_ctl.flow_mon_h.." tall",fg_bg=cpair(colors.gray,colors.white)}
+        TextBox{parent=mon_reqs,y=1,text="  must be "..overview_width.." blocks wide by "..f_at_least..tool_ctl.flow_mon_h.." tall",fg_bg=cpair(colors.gray,colors.white)}
     end
 
     -- set/edit a monitor's assignment
@@ -302,7 +303,7 @@ function hmi.create(tool_ctl, main_pane, cfg_sys, divs, style)
             msg = "This could work as a unit display. Please configure below."
             self.mon_expect = { 3 }
             mon_assign.set_value(3)
-        elseif w == 8 then
+        elseif w == 8 or (w == 7 and tmp_cfg.UnitCount == 1) then
             if h >= tool_ctl.main_mon_h and h >= tool_ctl.flow_mon_h then
                 msg = "This could work as either your main monitor or flow monitor. Please configure below."
                 self.mon_expect = { 1, 2 }
@@ -315,6 +316,10 @@ function hmi.create(tool_ctl, main_pane, cfg_sys, divs, style)
                 self.mon_expect = { 2 }
                 mon_assign.set_value(2)
             end
+        end
+
+        if w == 7 and #self.mon_expect > 0 then
+            msg = "Seven-wide overview. Flow requires no emergency tanks. Configure below."
         end
 
         -- override if a config exists

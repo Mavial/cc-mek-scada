@@ -38,7 +38,7 @@ local period = core.flasher.PERIOD
 ---@param root Container parent
 ---@param x integer top left x
 ---@param y integer top left y
-local function new_view(root, x, y)
+local function new_view(root, x, y, compact)
     local s_hi_box = style.theme.highlight_box
     local s_field = style.theme.field_box
 
@@ -65,7 +65,7 @@ local function new_view(root, x, y)
 
     local ess_ps = util.trinary(facility.ess_type == types.ESS.ENERGY_CORE, facility.ecore_ps_tbl[1], facility.induction_ps_tbl[1])
 
-    local main = Div{parent=root,width=128,height=24,x=x,y=y}
+    local main = Div{parent=root,width=util.trinary(compact,106,128),height=24,x=x,y=y}
 
     local scram = HazardButton{parent=main,y=1,text="FAC SCRAM",accent=colors.yellow,dis_colors=dis_colors,callback=db.process.fac_scram,fg_bg=hzd_fg_bg}
     local ack_a = HazardButton{parent=main,x=16,y=1,text="ACK \x13",accent=colors.orange,dis_colors=dis_colors,callback=db.process.fac_ack_alarms,fg_bg=hzd_fg_bg}
@@ -125,7 +125,7 @@ local function new_view(root, x, y)
     -- process control --
     ---------------------
 
-    local proc = Div{parent=main,width=103,height=24,x=27,y=1}
+    local proc = Div{parent=main,width=util.trinary(compact,80,103),height=24,x=27,y=1}
 
     -----------------------------
     -- process control targets --
@@ -404,7 +404,8 @@ local function new_view(root, x, y)
         end
     end
 
-    local waste_sel = Div{parent=proc,width=21,height=24,x=81,y=1}
+    local waste_sel = Div{parent=util.trinary(compact,root,proc),width=21,height=24,
+                          x=util.trinary(compact,84,81),y=util.trinary(compact,2,1)}
 
     local cutout_fg_bg = cpair(style.theme.bg, colors.brown)
 
