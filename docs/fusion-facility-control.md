@@ -129,3 +129,8 @@ STOP ends automatic dispatch using documented source-specific behavior.
 The read-only tools/fusion-probe.lua collects server-side peripheral capabilities
 and current readings. It writes a local report but has no reactor-control calls.
 This is evidence collection for the complete release, not a partial controller.
+
+If Pastebin report transfer fails, `tools/fusion-report-upload.lua` uploads the
+existing `fusion-probe.txt` to paste.rs and prints the retrieval link. It checks
+the report format, rejects partial uploads, and displays connection errors.
+The uploader reads the saved report only; it does not access reactor peripherals.
